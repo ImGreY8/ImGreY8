@@ -1,0 +1,195 @@
+import pygame
+import sys
+from random import randint, choice
+
+
+def gravity_reset():
+    player.sprite.rect.bottom = 620
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+
+        # player run
+        player_frame_1 = pygame.image.load('PYgamePlayerSpriteRunFrame1 (1).png').convert_alpha()
+        player_frame_2 = pygame.image.load('PYgamePlayerSpriteRunFrame2 (1).png').convert_alpha()
+        player_frame_3 = pygame.image.load('PYgamePlayerSpriteRunFrame3 (1).png').convert_alpha()
+        player_frame_4 = pygame.image.load('PYgamePlayerSpriteRunFrame4 (1).png').convert_alpha()
+        player_frame_5 = pygame.image.load('PYgamePlayerSpriteRunFrame5 (1).png').convert_alpha()
+        player_frame_6 = pygame.image.load('PYgamePlayerSpriteRunFrame6 (1).png').convert_alpha()
+        self.player_run = [player_frame_1, player_frame_2, player_frame_3, player_frame_4,
+                           player_frame_5, player_frame_6]
+        self.player_run_index = 0
+
+        # player Jump
+        player_jump_frame_1 = pygame.image.load('PYgamePlayerSpriteJumpFrame1.png').convert_alpha()
+        player_jump_frame_2 = pygame.image.load('PYgamePlayerSpriteJumpFrame2.png').convert_alpha()
+        player_jump_frame_3 = pygame.image.load('PYgamePlayerSpriteJumpFrame3.png').convert_alpha()
+        player_jump_frame_4 = pygame.image.load('PYgamePlayerSpriteJumpFrame4.png').convert_alpha()
+        self.player_jump = [player_jump_frame_1, player_jump_frame_2, player_jump_frame_3,
+                            player_jump_frame_4]
+        self.player_jump_index = 0
+        self.image = self.player_run[self.player_run_index]
+        self.rect = self.image.get_rect(midbottom=(80, 620))
+        self.rect = self.rect.inflate(-30, 0)
+
+        # gravity
+        self.gravity = 0
+
+        print(self.rect.bottom)
+
+    def player_input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE] and self.rect.bottom >= 614:
+            self.gravity = -20
+
+    def apply_gravity(self):
+        self.gravity += 1
+        self.rect.y += self.gravity
+        if self.rect.bottom >= 620:
+            self.rect.bottom = 620
+
+    def player_animation(self):
+        if self.rect.bottom < 620:
+            self.player_jump_index += 0.1
+            if self.player_jump_index >= len(self.player_jump):
+                self.player_jump_index = 0
+            self.image = self.player_jump[int(self.player_jump_index)]
+        else:
+            self.player_run_index += 0.11
+            if self.player_run_index >= len(self.player_run):
+                self.player_run_index = 0
+            self.image = self.player_run[int(self.player_run_index)]
+
+    def update(self):
+        self.player_input()
+        self.apply_gravity()
+        self.player_animation()
+
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, type_enemy):
+        super().__init__()
+        if type_enemy == 'fly':
+            enemy_fly_frame_1 = pygame.image.load('Fly1.png').convert_alpha()
+            enemy_fly_frame_2 = pygame.image.load('Fly2.png').convert_alpha()
+            enemy_fly_frame_3 = pygame.image.load('Fly3.png').convert_alpha()
+            enemy_fly_frame_4 = pygame.image.load('Fly4.png').convert_alpha()
+            self.enemy_frame = [enemy_fly_frame_1, enemy_fly_frame_2, enemy_fly_frame_3, enemy_fly_frame_4]
+            y_pos = 514
+
+        else:
+            enemy_snail_frame_1 = pygame.image.load('snail1.png').convert_alpha()
+            self.enemy_frame = [enemy_snail_frame_1]
+            y_pos = 614
+
+        self.enemy_index = 0
+        self.image = self.enemy_frame[self.enemy_index]
+        self.rect = self.image.get_rect(midbottom=(randint(1000, 1800), y_pos))
+        self.rect = self.rect.inflate(-30, 0)
+
+    def enemy_animation(self):
+        self.enemy_index += 0.1
+        if self.enemy_index >= len(self.enemy_frame):
+            self.enemy_index = 0
+        self.image = self.enemy_frame[int(self.enemy_index)]
+
+    def destroy(self):
+        if self.rect.x <= -100:
+            self.kill()
+
+    def update(self):
+        self.enemy_animation()
+        self.rect.x -= 6
+        self.destroy()
+
+
+# Displaying Time as Score
+def score_timer():
+    current_time = int(pygame.time.get_ticks() / 1000) - start_score_time
+    score_surface = score_font.render(f'Score: {current_time}', False, 'Black')
+    score_rect = score_surface.get_rect(center=(60, 25))
+    screen.blit(score_surface, score_rect)
+    return current_time
+
+
+def collision():
+    if pygame.sprite.spritecollide(player.sprite, enemy, False):
+        enemy.empty()
+        gravity_reset()
+        return False
+    else:
+        return True
+
+
+# Start
+pygame.init()
+screen = pygame.display.set_mode(size=(996, 668))
+pygame.display.set_caption('Grey Samurai')
+clock = pygame.time.Clock()
+
+# Text display and Fonts
+text_font = pygame.font.Font('font.ttf', 50)
+game_over_font = pygame.font.Font('font.ttf', 30)
+score_font = pygame.font.Font('scoreFont.ttf', 30)
+
+game_active = True
+end_text_surface = text_font.render('Game Over', False, 'Black')
+game_over_text = game_over_font.render('Press TAB to Start!', False, 'Black')
+
+# game Background
+game_background_surface = pygame.image.load('pyimage.jpg').convert_alpha()
+
+# Groups initialize
+# Group for player
+player = pygame.sprite.GroupSingle()
+player.add(Player())
+
+# Group for enemy
+enemy = pygame.sprite.Group()
+
+# Timer
+enemy_timer = pygame.USEREVENT + 1
+pygame.time.set_timer(enemy_timer, 1500)
+
+# Score Initialize
+start_score_time = 0
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        if game_active:
+            if event.type == enemy_timer:
+                enemy.add(Enemy(choice(['fly', 'enemy', 'enemy'])))
+        else:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+                game_active = True
+                start_score_time = int(pygame.time.get_ticks() / 1000)
+
+    if game_active:
+        screen.blit(game_background_surface, (0, 0))
+
+        player.draw(screen)
+        player.update()
+
+        enemy.draw(screen)
+        enemy.update()
+        score = score_timer()
+        game_active = collision()
+
+    else:
+        screen.blit(game_background_surface, (0, 0))
+        screen.blit(end_text_surface, (300, 50))
+        screen.blit(game_over_text, (274, 150))
+
+        end_score_display = game_over_font.render(f'Your Score  {score}', False, 'Black')
+        end_score_display_rect = end_score_display.get_rect(center=(480, 250))
+
+        screen.blit(end_score_display, end_score_display_rect)
+
+    clock.tick(60)
+    pygame.display.update()
