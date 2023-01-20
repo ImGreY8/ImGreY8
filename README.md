@@ -5,12 +5,5 @@
 
 Here are some ideas to get you started:
 
-- 🔭 I’m currently working on game development.
-- 🌱 I’m currently learning python.
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with game devs.
-- 💬 Ask me about anything related to python.
-- 📫 How to reach me: amanarjunilag@gmail.com
-- 😄 Pronouns: Aman.
-- ⚡ Fun fact: i love calisthenics.
--->
+It's my first Pygame project. A 2D endless runner game using only code. I'm still working on the UI part. 
+I have applied most of the mechanics which is commonly used in a 2D game.   
