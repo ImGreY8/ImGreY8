@@ -1,9 +1,17 @@
-### Hi there 👋
+# Aman Ilag
 
-<!--
-**ImGreY8/ImGreY8** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+## About Me
 
-Here are some ideas to get you started:
+Hi there! 👋 I'm Aman, a passionate game developer with a love for creating immersive gaming experiences. I specialize in game development using Godot, Unity, and Unreal Engine.
 
-It's my first Pygame project. A 2D endless runner game using only code. I'm still working on the UI part. 
-I have applied most of the mechanics which is commonly used in a 2D game.   
+
+Feel free to explore my repositories to see more of my projects!
+
+## Contact Me
+
+- 📧 Email: amanarjunilag@gmail.com
+
+## License
+
+All projects and content in this repository are licensed under the [MIT License](LICENSE).
+
