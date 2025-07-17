@@ -2,7 +2,7 @@
 
 ## About Me
 
-Hi there! 👋 I'm Aman, a passionate game developer with a love for creating immersive gaming experiences. I specialize in game development using Godot, Unity, and Unreal Engine.
+Hi there! 👋 I'm Aman, a passionate game developer with a love for creating immersive gaming experiences. I specialise in game development using Godot, Unity, and Unreal Engine.
 
 
 Feel free to explore my repositories to see more of my projects!
